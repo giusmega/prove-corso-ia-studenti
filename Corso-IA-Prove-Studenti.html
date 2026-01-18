@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corso IA Completo - Versione Studenti</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.1em; opacity: 0.95; }
+        .controls { padding: 20px 30px; background: #f8f9fa; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95em; font-weight: 600; transition: all 0.3s ease; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        #userSection { background: #e7f3ff; padding: 15px 30px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        #userIdInput { padding: 8px 12px; border: 1px solid #667eea; border-radius: 4px; font-size: 0.95em; }
+        .user-info { color: #667eea; font-weight: bold; margin-left: auto; }
+        .content { padding: 30px; max-height: 600px; overflow-y: auto; }
+        .content::-webkit-scrollbar { width: 8px; }
+        .content::-webkit-scrollbar-track { background: #f1f1f1; }
+        .content::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
+        h2 { color: #667eea; margin-bottom: 15px; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        h3 { color: #764ba2; margin-top: 20px; margin-bottom: 10px; }
+        .exercise { background: #f8f9fa; padding: 15px; border-left: 4px solid #667eea; margin: 15px 0; border-radius: 4px; }
+        .exercise strong { color: #667eea; }
+        .time { display: inline-block; background: #667eea; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.85em; margin-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #667eea; color: white; }
+        tr:hover { background: #f5f5f5; }
+        .test { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; border-radius: 4px; }
+        .test h4 { color: #856404; margin-bottom: 10px; }
+        .option { padding: 8px 0; margin: 5px 0; }
+        .option input { margin-right: 8px; cursor: pointer; }
+        textarea { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; resize: vertical; min-height: 80px; }
+        .feedback { margin-top: 10px; padding: 10px; border-radius: 4px; font-weight: bold; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .feedback.incorrect { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .progress-bar { background: #e9ecef; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .progress-bar h4 { margin-bottom: 8px; color: #667eea; }
+        .progress-fill { background: #667eea; height: 20px; border-radius: 10px; overflow: hidden; }
+        .progress-text { background: #667eea; height: 100%; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.85em; font-weight: bold; transition: width 0.3s; width: 0%; }
+        .export-box { background: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745; }
+        .export-box h4 { color: #155724; margin-bottom: 10px; }
+        .export-box p { color: #155724; font-size: 0.9em; margin: 5px 0; }
+        .footer { background: #f8f9fa; padding: 20px 30px; text-align: center; color: #666; border-top: 1px solid #ddd; }
+        .hidden { display: none !important; }
+        .modulo-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .modulo-btn { padding: 10px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .modulo-btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .modulo-btn.active { background: #764ba2; box-shadow: 0 5px 15px rgba(118,75,162,0.4); }
+        .modulo-btn.completed { background: #28a745; }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .content { max-height: 500px; }
+            .modulo-nav { grid-template-columns: repeat(2, 1fr); }
+            #userSection { flex-direction: column; align-items: flex-start; }
+            .controls { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>INTELLIGENZA ARTIFICIALE</h1>
+            <p>Corso Completo - Versione Studenti</p>
+            <p style="font-size: 0.95em; margin-top: 10px;">70 ore: Lezioni, Esercizi, Valutazioni</p>
+        </header>
+        
+        <div id="userSection" class="controls">
+            <input type="text" id="userIdInput" placeholder="Inserisci ID utente (es. Studente1)" maxlength="30">
+            <button class="btn-primary" onclick="initUser()">Accedi</button>
+            <button class="btn-success" onclick="exportProgressFile()">📥 Scarica Risposte</button>
+            <button class="btn-secondary" onclick="printContent()">Stampa</button>
+            <button class="btn-secondary" onclick="toggleFullscreen()">Schermo Intero</button>
+            <span class="user-info" id="userInfo"></span>
+        </div>
+
+        <div class="content" id="mainContent" style="display: none;">
+            <div class="export-box">
+                <h4>📤 Come Inviare le Tue Risposte</h4>
+                <p>✅ <strong>Scarica il file:</strong> Clicca "📥 Scarica Risposte" in alto (funziona sempre, anche senza completare)</p>
+                <p>✅ <strong>Nome file:</strong> <code>Risposte_[TuoNome]_[Data].txt</code></p>
+                <p>✅ <strong>Invia a:</strong> [email_docente@email.com]</p>
+                <p style="margin-top: 10px; font-size: 0.85em; color: #666;">💡 <em>Le risposte si salvano automaticamente. Il file contiene TUTTE le tue risposte + timestamp.</em></p>
+            </div>
+
+            <div class="progress-bar">
+                <h4>📊 Progresso Generale</h4>
+                <div class="progress-fill">
+                    <div class="progress-text" id="progressText" style="width: 0%;">0%</div>
+                </div>
+                <p style="margin-top: 8px; font-size: 0.9em; color: #666;" id="progressDetails">0 moduli completati</p>
+            </div>
+
+            <div class="modulo-nav">
+                <button class="modulo-btn active" onclick="showModule('intro')">Modulo 1</button>
+                <button class="modulo-btn" onclick="showModule('storia')">Modulo 2</button>
+                <button class="modulo-btn" onclick="showModule('nlp')">Moduli 3-6</button>
+                <button class="modulo-btn" onclick="showModule('app')">Moduli 7-8</button>
+                <button class="modulo-btn" onclick="showModule('scrittura')">Moduli 9-11</button>
+                <button class="modulo-btn" onclick="showModule('lavoro')">Moduli 12-14</button>
+                <button class="modulo-btn" onclick="showModule('limiti')">Moduli 15-17</button>
+                <button class="modulo-btn" onclick="showModule('futuro')">Moduli 18-22</button>
+                <button class="modulo-btn" onclick="showModule('esame')">Esame Finale</button>
+            </div>
+
+            <!-- MODULO 1 -->
+            <div id="intro" class="modulo-content">
+                <h2>MODULO 1: INTRODUZIONE ALL'INTELLIGENZA ARTIFICIALE</h2>
+                <h3>Esercizio 1.1: Definizione e applicazioni nel quotidiano</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Riconoscere esempi di IA nella vita quotidiana<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Elencare 5 strumenti IA usati oggi (es. ChatGPT, filtro email, suggerimenti Netflix)<br>
+                    2. Per ciascuno, descrivere:<br>
+                    - Che tipo di IA (ristretta, debole, ecc.)<br>
+                    - Qual è l'input e quale l'output<br>
+                    - Come migliora la mia esperienza<br><br>
+                    <textarea id="es1_1" placeholder="Scrivi le tue risposte..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+
+                <h3>Esercizio 1.2: IA Debole vs IA Forte - Discussione</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Comprendere i limiti e le potenzialità attuali dell'IA<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Discutere in piccoli gruppi: "Perché ChatGPT è IA debole?"<br>
+                    2. Identificare 3 compiti che ChatGPT NON può fare:<br>
+                    - Avere emozioni vere<br>
+                    - Capire intenti nascosti<br>
+                    - Creare consapevolezza<br>
+                    3. Presentare: "Come sarebbe un'IA forte e perché non esiste ancora?"<br><br>
+                    <textarea id="es1_2" placeholder="Scrivi le tue considerazioni..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 1.3: Prompt Building Base</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Imparare a interagire correttamente con ChatGPT<br><br>
+                    <strong>Attività:</strong> Scrivi 3 versioni di un prompt, progressivamente più dettagliato<br><br>
+                    <strong>Versione 1 - Vaga:</strong> Spiega l'IA<br>
+                    <strong>Versione 2 - Specifica:</strong> Spiega l'IA generativa in 100 parole<br>
+                    <strong>Versione 3 - Ottimale:</strong> Spiega l'IA generativa per un ragazzo di 14 anni, con esempi italiani, in 100 parole<br><br>
+                    Confronta i risultati e annota le differenze.<br><br>
+                    <textarea id="es1_3" placeholder="Scrivi le tue osservazioni..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+
+                <div class="test">
+                    <h4>Test di Valutazione Modulo 1</h4>
+                    <p><strong>D1:</strong> Quali sono i 4 componenti essenziali di un sistema IA?</p>
+                    <div class="option"><input type="radio" name="q1" value="a" onchange="saveAndCheck('q1')"> A) Hardware, software, internet, esperti umani</div>
+                    <div class="option"><input type="radio" name="q1" value="b" onchange="saveAndCheck('q1')"> B) Algoritmi, modelli, dati, potenza di calcolo</div>
+                    <div class="option"><input type="radio" name="q1" value="c" onchange="saveAndCheck('q1')"> C) Neuroni artificiali, memoria, velocità, intelligenza</div>
+                    <div class="option"><input type="radio" name="q1" value="d" onchange="saveAndCheck('q1')"> D) Servers, GPU, cloud, reti neurali</div>
+                    <div class="feedback" id="fb_q1"></div>
+
+                    <p style="margin-top: 15px;"><strong>D2:</strong> Se una IA generativa scrive una poesia, perché NON è creatività nel senso umano?</p>
+                    <textarea id="q1_d2" placeholder="Scrivi la tua risposta (almeno 3 motivi)..." onchange="autoSave()"></textarea>
+                </div>
+            </div>
+
+            <!-- MODULO 2 -->
+            <div id="storia" class="modulo-content hidden">
+                <h2>MODULO 2: STORIA E SVILUPPO DELL'IA</h2>
+                <h3>Esercizio 2.1: Timeline dell'IA - Ricostruzione</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Memorizzare gli eventi chiave<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Crea una linea del tempo 1950-2025<br>
+                    2. Inserisci 10 tappe fondamentali<br>
+                    3. Per ciascuna: data, evento, perché importante<br><br>
+                    <strong>Eventi chiave:</strong><br>
+                    - 1950: Test di Turing<br>
+                    - 1956: Conferenza Dartmouth<br>
+                    - 1966: Rapporto ALPAC (primo inverno)<br>
+                    - 1980s: Sistemi esperti MYCIN<br>
+                    - 1997: Deep Blue vince al scacchi<br>
+                    - 2012: AlexNet vince ImageNet<br>
+                    - 2016: AlphaGo batte Lee Sedol<br>
+                    - 2022: ChatGPT 100M utenti in 2 mesi<br>
+                    - 2023: GPT-4, Gemini<br>
+                    - 2024-2025: Boom IA generativa<br><br>
+                    <textarea id="es2_1" placeholder="Scrivi la tua timeline..." onchange="autoSave()"></textarea>
+                    <span class="time">30 min</span>
+                </div>
+
+                <h3>Esercizio 2.2: I Pionieri - Ricerca e Presentazione</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Approfondire i fondatori<br><br>
+                    <strong>Attività:</strong> Dividi la classe in 4 gruppi, uno per pioniere<br><br>
+                    1. <strong>Alan Turing:</strong> Padre teorico - Matematico britannico 1912-1954<br>
+                    2. <strong>John McCarthy:</strong> Creatore del termine - Informatico americano 1927-2011<br>
+                    3. <strong>Marvin Minsky:</strong> Teorico della mente - Cofondatore MIT AI Lab<br>
+                    4. <strong>Herbert Simon e Allen Newell:</strong> Problem Solving - Psicologi cognitivi<br><br>
+                    <textarea id="es2_2" placeholder="Scrivi le tue ricerche..." onchange="autoSave()"></textarea>
+                    <span class="time">45 min</span>
+                </div>
+
+                <h3>Esercizio 2.3: Dal Simbolico al Statistico - Simulazione</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Capire il cambio di paradigma<br><br>
+                    <strong>Scenario A - IA Simbolica (1960s):</strong><br>
+                    Task: Riconoscere spam vs mail importante<br>
+                    Metodo: Scrivi 20 regole IF-THEN<br><br>
+                    <strong>Scenario B - Machine Learning (2000s):</strong><br>
+                    Task: Stesso<br>
+                    Metodo: 10.000 email etichettate + algoritmo<br><br>
+                    <strong>Discussione:</strong> Vantaggi e limiti di ogni approccio?<br><br>
+                    <textarea id="es2_3" placeholder="Scrivi le tue considerazioni..." onchange="autoSave()"></textarea>
+                    <span class="time">25 min</span>
+                </div>
+
+                <div class="test">
+                    <h4>Test di Valutazione Modulo 2</h4>
+                    <p><strong>D1:</strong> Cosa ha segnato il passaggio dal primo inverno agli anni 80?</p>
+                    <div class="option"><input type="radio" name="q2" value="a" onchange="saveAndCheck('q2')"> A) Arrivo internet</div>
+                    <div class="option"><input type="radio" name="q2" value="b" onchange="saveAndCheck('q2')"> B) Sviluppo sistemi esperti</div>
+                    <div class="option"><input type="radio" name="q2" value="c" onchange="saveAndCheck('q2')"> C) ChatGPT</div>
+                    <div class="option"><input type="radio" name="q2" value="d" onchange="saveAndCheck('q2')"> D) Deep learning</div>
+                    <div class="feedback" id="fb_q2"></div>
+
+                    <p style="margin-top: 15px;"><strong>D2:</strong> Che cosa ha cambiato AlexNet nel 2012?</p>
+                    <textarea id="q2_d2" placeholder="Scrivi la tua risposta..." onchange="autoSave()"></textarea>
+                </div>
+            </div>
+
+            <!-- MODULI 3-6 -->
+            <div id="nlp" class="modulo-content hidden">
+                <h2>MODULI 3-6: NLP, CHATGPT, PERPLEXITY</h2>
+                <h3>Esercizio 3.1: NLP nella pratica - Analisi di Sentiment</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Capire come il linguaggio viene elaborato<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Leggi 5 commenti e identifica sentiment, elementi indicatori e difficoltà<br>
+                    2. Prova su Perplexity: "Analisi sentiment di questi testi"<br><br>
+                    <strong>Testi da analizzare:</strong><br>
+                    - Adoro! Bellissimo!<br>
+                    - Non mi piace, deludente<br>
+                    - ok, niente speciale<br>
+                    - Che disastro, complimenti ironico<br>
+                    - Interessante, ma costoso<br><br>
+                    <textarea id="es3_1" placeholder="Scrivi le tue analisi..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 4.1: ChatGPT vs Perplexity - Confronto</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Usare entrambi e capire le differenze<br><br>
+                    <strong>Domanda test:</strong> "Qual è la capitale della Namibia e caratteristiche?"<br><br>
+                    <strong>Confronta:</strong><br>
+                    1. Velocità<br>
+                    2. Fonti (Perplexity cita, ChatGPT no)<br>
+                    3. Accuratezza<br>
+                    4. Dettagli<br><br>
+                    <strong>Conclusione:</strong> Quando usi uno vs l'altro?<br><br>
+                    <textarea id="es4_1" placeholder="Scrivi il tuo confronto..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+
+                <div class="test">
+                    <h4>Test di Valutazione Moduli 3-6</h4>
+                    <p><strong>D1:</strong> Differenza principale tra ChatGPT e Perplexity?</p>
+                    <div class="option"><input type="radio" name="q3" value="a" onchange="saveAndCheck('q3')"> A) ChatGPT è più lento</div>
+                    <div class="option"><input type="radio" name="q3" value="b" onchange="saveAndCheck('q3')"> B) Perplexity integra web in tempo reale e cita fonti</div>
+                    <div class="option"><input type="radio" name="q3" value="c" onchange="saveAndCheck('q3')"> C) ChatGPT non scrive</div>
+                    <div class="option"><input type="radio" name="q3" value="d" onchange="saveAndCheck('q3')"> D) Perplexity non ha modello linguistico</div>
+                    <div class="feedback" id="fb_q3"></div>
+                </div>
+            </div>
+
+            <!-- MODULI 7-8 -->
+            <div id="app" class="modulo-content hidden">
+                <h2>MODULI 7-8: APPLICAZIONI E PRODUTTIVITÀ</h2>
+                <h3>Esercizio 7.1: Mappare le IA nella Tua Vita</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Consapevolezza IA nel quotidiano<br><br>
+                    <strong>Attività:</strong> Registra per 1 giorno ogni uso di IA in una tabella<br><br>
+                    <table>
+                        <tr><th>Orario</th><th>IA</th><th>Azione</th><th>Tempo risparmiato</th></tr>
+                        <tr><td>8:00</td><td>Gmail</td><td>Filtro spam</td><td>2 min</td></tr>
+                        <tr><td>10:30</td><td>Google</td><td>Suggerimenti</td><td>3 min</td></tr>
+                    </table>
+                    <textarea id="es7_1" placeholder="Scrivi il tuo log IA..." onchange="autoSave()"></textarea>
+                    <span class="time">1 giorno + 10 min</span>
+                </div>
+
+                <h3>Esercizio 8.1: ChatGPT per Pianificazione</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Automatizzare compiti<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Chiedi: "Piano studio Python, 4 settimane, 1 ora/giorno"<br>
+                    2. ChatGPT genererà: Sett 1-4 con argomenti<br>
+                    3. Personalizza: togli, aggiungi, modifica<br>
+                    4. Esporta in Notion/Google Calendar<br><br>
+                    <strong>Output:</strong> Piano di studio strutturato<br><br>
+                    <textarea id="es8_1" placeholder="Scrivi il tuo piano..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 8.2: Note Strutturate</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Organizzare informazioni<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Scrivi nota disordinata<br>
+                    2. Chiedi a ChatGPT: "Organizza in formato strutturato"<br>
+                    3. Copia in Notion con tag<br><br>
+                    <textarea id="es8_2" placeholder="Scrivi la tua nota..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+            </div>
+
+            <!-- MODULI 9-11 -->
+            <div id="scrittura" class="modulo-content hidden">
+                <h2>MODULI 9-11: SCRITTURA, RICERCA, BRAINSTORMING</h2>
+                <h3>Esercizio 9.1: Scrittura Creativa</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Co-creazione uomo-macchina<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Scegli genere: racconto, poesia, blog<br>
+                    2. Dai spunto minimo a ChatGPT<br>
+                    3. ChatGPT genera prima versione<br>
+                    4. Chiedi 3 varianti<br>
+                    5. Completa tu stesso<br><br>
+                    <textarea id="es9_1" placeholder="Scrivi la tua storia..." onchange="autoSave()"></textarea>
+                    <span class="time">30 min</span>
+                </div>
+
+                <h3>Esercizio 9.2: Email Professionale - Prima e Dopo</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Migliorare comunicazione<br><br>
+                    <strong>Email disordinata:</strong><br>
+                    "Ciao, volevo sapere se il progetto è finito. Abbiamo deadline. Quali problemi hai trovato?"<br><br>
+                    <strong>Usa ChatGPT per riformulare in modo professionale.</strong><br><br>
+                    <textarea id="es9_2" placeholder="Scrivi l'email professionale..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+
+                <h3>Esercizio 10.1: Ricerca Tesi con Perplexity</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Ricerche accademiche<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Scegli argomento tesi<br>
+                    2. Ricerca su Perplexity: "Ultimi studi su [argomento] 2024"<br>
+                    3. Raccogli 5-10 fonti<br>
+                    4. Verifica 2-3 fonti direttamente<br><br>
+                    <textarea id="es10_1" placeholder="Scrivi le tue ricerche..." onchange="autoSave()"></textarea>
+                    <span class="time">30 min</span>
+                </div>
+
+                <h3>Esercizio 11.1: Fact-Checking</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Verificare informazioni<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Trova affermazione discutibile online<br>
+                    2. Su Perplexity: "È vero che [X]? Fonti."<br>
+                    3. Annota: vero/falso/parziale + fonti<br><br>
+                    <textarea id="es11_1" placeholder="Scrivi i tuoi fact-check..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+            </div>
+
+            <!-- MODULI 12-14 -->
+            <div id="lavoro" class="modulo-content hidden">
+                <h2>MODULI 12-14: LAVORO, BUSINESS, PROMPT ENGINEERING</h2>
+                <h3>Esercizio 12.1: Automazione Compiti</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Identificare task ripetitivi<br><br>
+                    <strong>Attività:</strong> Elenca 5 compiti ricorrenti e come automatizzarli con IA<br><br>
+                    <table>
+                        <tr><th>Compito</th><th>Tempo</th><th>Automazione</th><th>Strumento</th></tr>
+                        <tr><td>Email follow-up</td><td>15 min</td><td>Modelli ChatGPT</td><td>ChatGPT</td></tr>
+                    </table>
+                    <textarea id="es12_1" placeholder="Scrivi i tuoi compiti..." onchange="autoSave()"></textarea>
+                    <span class="time">30 min</span>
+                </div>
+
+                <h3>Esercizio 13.1: Content Marketing</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Creare contenuti aziendali<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Chiedi: "5 titoli LinkedIn per [tema]"<br>
+                    2. Scegli migliore<br>
+                    3. Chiedi: "Post completo 300 parole"<br>
+                    4. Personalizza con dati reali<br>
+                    5. Chiedi: "3 call-to-action"<br><br>
+                    <textarea id="es13_1" placeholder="Scrivi il tuo contenuto..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 14.1: Prompt Engineering - Dal Vago al Preciso</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Padroneggiare formulazione richieste<br><br>
+                    <strong>Attività:</strong> Scrivi 5 versioni progressivamente migliori<br><br>
+                    <strong>V1 - Vaga:</strong> "Spiega machine learning" (Generico)<br>
+                    <strong>V2:</strong> "Spiega ML in 150 parole" (Meglio)<br>
+                    <strong>V3:</strong> "Spiega ML a 16enne, 150 parole, 2 esempi italiani" (Specifico)<br>
+                    <strong>V4:</strong> "Sei insegnante informatica. Spiega ML..." (Ruolo definito)<br>
+                    <strong>V5:</strong> "Struttura: intro, 2 esempi, conclusione" (Formato)<br><br>
+                    <textarea id="es14_1" placeholder="Scrivi le tue versioni..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 14.2: Errori Comuni</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Imparare cosa NON fare<br><br>
+                    <strong>Prompt sbagliati comuni:</strong><br>
+                    1. Troppo generico: "Parla di IA"<br>
+                    2. Ambiguo: "Mi serve un testo"<br>
+                    3. Contraddittorio: "Scrivi brevemente ma dettagliato"<br><br>
+                    <strong>Compito:</strong> Come correggi ogni prompt?<br><br>
+                    <textarea id="es14_2" placeholder="Scrivi le correzioni..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+            </div>
+
+            <!-- MODULI 15-17 -->
+            <div id="limiti" class="modulo-content hidden">
+                <h2>MODULI 15-17: LIMITI, RISCHI, PRIVACY</h2>
+                <h3>Esercizio 15.1: Hallucination</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Riconoscere quando IA inventa<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Chiedi: "Film che vince Oscar nel 2099?"<br>
+                    2. ChatGPT inventerà risposta<br>
+                    3. Osserva: "Come mai risponde se non sa?"<br>
+                    4. Impara indicatori di hallucination<br><br>
+                    <strong>Indicatori:</strong><br>
+                    - Dati molto recenti/futuri<br>
+                    - Numeri specifici non verificabili<br>
+                    - Dettagli su persone poco conosciute<br>
+                    - Citazioni che sembrano reali<br><br>
+                    <textarea id="es15_1" placeholder="Scrivi le tue osservazioni..." onchange="autoSave()"></textarea>
+                    <span class="time">15 min</span>
+                </div>
+
+                <h3>Esercizio 15.2: Bias negli Algoritmi</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Riconoscere pregiudizi<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Chiedi: "Descrivi CEO tech company tipico"<br>
+                    2. Chiedi: "Descrivi segretaria"<br>
+                    3. Discussione: "Questi stereotipi sono reali? Dove vengono questi bias? Come combatterli?"<br><br>
+                    <textarea id="es15_2" placeholder="Scrivi le tue considerazioni..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 16.1: Privacy e Dati</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Consapevolezza privacy<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Leggi privacy policy ChatGPT e Perplexity<br>
+                    2. Confronta: quale è più trasparente?<br><br>
+                    <strong>Checklist Sicurezza:</strong><br>
+                    ☐ No dati personali<br>
+                    ☐ No password o token<br>
+                    ☐ Usa conversazioni private<br>
+                    ☐ Leggi policy<br>
+                    ☐ Disattiva cronologia se preferisci<br><br>
+                    <textarea id="es16_1" placeholder="Scrivi le tue considerazioni..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+
+                <h3>Esercizio 17.1: Plugin e Integrazioni</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Estendere ChatGPT<br><br>
+                    <strong>Attività (Richiede ChatGPT Plus):</strong><br>
+                    1. Accedi a Plugin ChatGPT<br>
+                    2. Naviga plugin disponibili<br>
+                    3. Scegli 2 interessanti<br>
+                    4. Leggi descrizioni<br>
+                    5. Prova uno se possibile<br><br>
+                    <textarea id="es17_1" placeholder="Scrivi i tuoi plugin..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+            </div>
+
+            <!-- MODULI 18-22 -->
+            <div id="futuro" class="modulo-content hidden">
+                <h2>MODULI 18-22: CASI D'USO, INTEGRAZIONI, FUTURO</h2>
+                <h3>Esercizio 18.1: Case Study</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Applicare a scenari reali<br><br>
+                    <strong>Attività:</strong> Scegli 1 case study dal corso<br><br>
+                    1. Gestione progetto<br>
+                    2. Tesi universitaria<br>
+                    3. Content marketing<br>
+                    4. Customer care<br>
+                    5. Lavoro freelance<br>
+                    6. Apprendimento competenza<br>
+                    7. Business digitale<br><br>
+                    Per il case scelto:<br>
+                    - Riassumi scenario<br>
+                    - Tool usati<br>
+                    - Vantaggi evidenti<br>
+                    - Rischi/limitazioni<br>
+                    - Come adattare al TUO contesto<br><br>
+                    <textarea id="es18_1" placeholder="Scrivi il tuo case study..." onchange="autoSave()"></textarea>
+                    <span class="time">30 min</span>
+                </div>
+
+                <h3>Esercizio 19.1: Integrazione IA nei Tuoi Progetti</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Pianificare uso IA<br><br>
+                    <strong>Attività:</strong><br>
+                    1. Identifica progetto tuo<br>
+                    2. Dove potrebbe entrare IA? (3-5 punti)<br>
+                    3. Quali compiti automatizzare?<br>
+                    4. Quali tool usare?<br>
+                    5. Quali rischi affidare all'IA?<br>
+                    6. Come verificare qualità?<br>
+                    7. Crea piano implementazione<br><br>
+                    <textarea id="es19_1" placeholder="Scrivi il tuo piano..." onchange="autoSave()"></textarea>
+                    <span class="time">40 min</span>
+                </div>
+
+                <h3>Esercizio 21.1: Visione del Futuro</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Pensiero critico<br><br>
+                    <strong>Attività:</strong> Dividi classe in 2 gruppi<br><br>
+                    <strong>Gruppo A - Scenario positivo:</strong><br>
+                    Come IA risolve problemi entro 2030?<br>
+                    Sanità, educazione, clima, povertà<br><br>
+                    <strong>Gruppo B - Scenario critico:</strong><br>
+                    Quali rischi potremmo affrontare?<br>
+                    Disoccupazione, bias, potere, dipendenza<br><br>
+                    Ogni gruppo: 3-5 punti, presenta 5 min, dibattito 10 min<br><br>
+                    <textarea id="es21_1" placeholder="Scrivi la tua visione..." onchange="autoSave()"></textarea>
+                    <span class="time">30 min</span>
+                </div>
+
+                <h3>Esercizio 22.1: Apprendimento Continuo</h3>
+                <div class="exercise">
+                    <strong>Obiettivo:</strong> Sapere dove imparare<br><br>
+                    <strong>Attività:</strong> Crea lista risorse personali<br><br>
+                    1. <strong>Corsi online:</strong> 2 - Link, durata, costo, perché<br>
+                    2. <strong>Newsletter/Blog:</strong> 2 - Nome, frequenza, tema<br>
+                    3. <strong>Community:</strong> 1 - Dove, tema, iscrizione<br>
+                    4. <strong>Tool da approfondire:</strong> - Quale? Cosa imparare?<br><br>
+                    <textarea id="es22_1" placeholder="Scrivi le tue risorse..." onchange="autoSave()"></textarea>
+                    <span class="time">20 min</span>
+                </div>
+            </div>
+
+            <!-- ESAME FINALE -->
+            <div id="esame" class="modulo-content hidden">
+                <h2>SIMULAZIONE ESAME FINALE</h2>
+                <p><strong>Durata:</strong> 90 minuti | <strong>Punteggio:</strong> 100 punti</p>
+                <hr style="margin: 20px 0;">
+
+                <h3>PARTE 1: SCELTA MULTIPLA (40 punti)</h3>
+                <div class="test">
+                    <p><strong>1.</strong> Quali sono i 4 componenti di un sistema IA?</p>
+                    <div class="option"><input type="radio" name="exam1" value="a" onchange="saveAndCheck('exam1')"> A) Hardware, software, internet, esperti</div>
+                    <div class="option"><input type="radio" name="exam1" value="b" onchange="saveAndCheck('exam1')"> B) Algoritmi, modelli, dati, potenza calcolo</div>
+                    <div class="option"><input type="radio" name="exam1" value="c" onchange="saveAndCheck('exam1')"> C) Neuroni artificiali, memoria, velocità, intelligenza</div>
+                    <div class="option"><input type="radio" name="exam1" value="d" onchange="saveAndCheck('exam1')"> D) Servers, GPU, cloud, reti neurali</div>
+                    <div class="feedback" id="fb_exam1"></div>
+
+                    <p style="margin-top: 15px;"><strong>2.</strong> Test di Turing proposto da:</p>
+                    <div class="option"><input type="radio" name="exam2" value="a" onchange="saveAndCheck('exam2')"> A) Minsky</div>
+                    <div class="option"><input type="radio" name="exam2" value="b" onchange="saveAndCheck('exam2')"> B) Turing (1950)</div>
+                    <div class="option"><input type="radio" name="exam2" value="c" onchange="saveAndCheck('exam2')"> C) McCarthy</div>
+                    <div class="option"><input type="radio" name="exam2" value="d" onchange="saveAndCheck('exam2')"> D) Newell</div>
+                    <div class="feedback" id="fb_exam2"></div>
+
+                    <p style="margin-top: 15px;"><strong>3.</strong> Primo inverno IA causato da:</p>
+                    <div class="option"><input type="radio" name="exam3" value="a" onchange="saveAndCheck('exam3')"> A) Freddo climatico</div>
+                    <div class="option"><input type="radio" name="exam3" value="b" onchange="saveAndCheck('exam3')"> B) Divario promesse vs risultati</div>
+                    <div class="option"><input type="radio" name="exam3" value="c" onchange="saveAndCheck('exam3')"> C) Mancanza di dati</div>
+                    <div class="option"><input type="radio" name="exam3" value="d" onchange="saveAndCheck('exam3')"> D) Interruzione finanziamenti</div>
+                    <div class="feedback" id="fb_exam3"></div>
+
+                    <p style="margin-top: 15px;"><strong>4.</strong> AlexNet (2012) dimostrò:</p>
+                    <div class="option"><input type="radio" name="exam4" value="a" onchange="saveAndCheck('exam4')"> A) ML non funzionava</div>
+                    <div class="option"><input type="radio" name="exam4" value="b" onchange="saveAndCheck('exam4')"> B) Deep learning superava metodi tradizionali</div>
+                    <div class="option"><input type="radio" name="exam4" value="c" onchange="saveAndCheck('exam4')"> C) IA era impossibile</div>
+                    <div class="option"><input type="radio" name="exam4" value="d" onchange="saveAndCheck('exam4')"> D) Reti neurali erano inutili</div>
+                    <div class="feedback" id="fb_exam4"></div>
+
+                    <p style="margin-top: 15px;"><strong>5.</strong> Differenza IA debole/forte:</p>
+                    <div class="option"><input type="radio" name="exam5" value="a" onchange="saveAndCheck('exam5')"> A) Velocità</div>
+                    <div class="option"><input type="radio" name="exam5" value="b" onchange="saveAndCheck('exam5')"> B) Debole=specializzata, Forte=generalista</div>
+                    <div class="option"><input type="radio" name="exam5" value="c" onchange="saveAndCheck('exam5')"> C) Costo</div>
+                    <div class="option"><input type="radio" name="exam5" value="d" onchange="saveAndCheck('exam5')"> D) Numero parametri</div>
+                    <div class="feedback" id="fb_exam5"></div>
+
+                    <p style="margin-top: 15px;"><strong>6.</strong> ChatGPT è:</p>
+                    <div class="option"><input type="radio" name="exam6" value="a" onchange="saveAndCheck('exam6')"> A) IA simbolica</div>
+                    <div class="option"><input type="radio" name="exam6" value="b" onchange="saveAndCheck('exam6')"> B) IA generativa</div>
+                    <div class="option"><input type="radio" name="exam6" value="c" onchange="saveAndCheck('exam6')"> C) Motore di ricerca</div>
+                    <div class="option"><input type="radio" name="exam6" value="d" onchange="saveAndCheck('exam6')"> D) Sistema esperto</div>
+                    <div class="feedback" id="fb_exam6"></div>
+
+                    <p style="margin-top: 15px;"><strong>7.</strong> NLP permette di:</p>
+                    <div class="option"><input type="radio" name="exam7" value="a" onchange="saveAndCheck('exam7')"> A) Riconoscere immagini</div>
+                    <div class="option"><input type="radio" name="exam7" value="b" onchange="saveAndCheck('exam7')"> B) Comprendere linguaggio umano</div>
+                    <div class="option"><input type="radio" name="exam7" value="c" onchange="saveAndCheck('exam7')"> C) Guidare auto</div>
+                    <div class="option"><input type="radio" name="exam7" value="d" onchange="saveAndCheck('exam7')"> D) Controllare droni</div>
+                    <div class="feedback" id="fb_exam7"></div>
+
+                    <p style="margin-top: 15px;"><strong>8.</strong> Vantaggio Perplexity:</p>
+                    <div class="option"><input type="radio" name="exam8" value="a" onchange="saveAndCheck('exam8')"> A) Più veloce</div>
+                    <div class="option"><input type="radio" name="exam8" value="b" onchange="saveAndCheck('exam8')"> B) Web tempo reale + fonti</div>
+                    <div class="option"><input type="radio" name="exam8" value="c" onchange="saveAndCheck('exam8')"> C) Più preciso</div>
+                    <div class="option"><input type="radio" name="exam8" value="d" onchange="saveAndCheck('exam8')"> D) Meno hallucination</div>
+                    <div class="feedback" id="fb_exam8"></div>
+
+                    <p style="margin-top: 15px;"><strong>9.</strong> Test Turing misura:</p>
+                    <div class="option"><input type="radio" name="exam9" value="a" onchange="saveAndCheck('exam9')"> A) Velocità</div>
+                    <div class="option"><input type="radio" name="exam9" value="b" onchange="saveAndCheck('exam9')"> B) Se macchina pensa come umano (comportamento intelligente)</div>
+                    <div class="option"><input type="radio" name="exam9" value="c" onchange="saveAndCheck('exam9')"> C) Memoria</div>
+                    <div class="option"><input type="radio" name="exam9" value="d" onchange="saveAndCheck('exam9')"> D) Potenza calcolo</div>
+                    <div class="feedback" id="fb_exam9"></div>
+
+                    <p style="margin-top: 15px;"><strong>10.</strong> Hallucination IA è:</p>
+                    <div class="option"><input type="radio" name="exam10" value="a" onchange="saveAndCheck('exam10')"> A) Errore programmazione</div>
+                    <div class="option"><input type="radio" name="exam10" value="b" onchange="saveAndCheck('exam10')"> B) Quando IA inventa informazioni</div>
+                    <div class="option"><input type="radio" name="exam10" value="c" onchange="saveAndCheck('exam10')"> C) Blocco processore</div>
+                    <div class="option"><input type="radio" name="exam10" value="d" onchange="saveAndCheck('exam10')"> D) Crash del sistema</div>
+                    <div class="feedback" id="fb_exam10"></div>
+                </div>
+
+                <h3 style="margin-top: 30px;">PARTE 2: DOMANDE APERTE (60 punti)</h3>
+                <div class="test">
+                    <h4>Domanda 1 (20 punti): ChatGPT vs Perplexity</h4>
+                    <p>Spiega le differenze, quando usare ciascuno, quale per ricerca universitaria.</p>
+                    <textarea id="aperta1" placeholder="Scrivi la tua risposta..." onchange="autoSave()"></textarea>
+
+                    <h4 style="margin-top: 20px;">Domanda 2 (20 punti): Prompt Engineering</h4>
+                    <p>Scrivi 3 versioni di un prompt (vaga, specifica, ottimale), spiega i miglioramenti.</p>
+                    <textarea id="aperta2" placeholder="Scrivi la tua risposta..." onchange="autoSave()"></textarea>
+
+                    <h4 style="margin-top: 20px;">Domanda 3 (20 punti): Applicazione Pratica</h4>
+                    <p>Descrivi un progetto dove integri IA. Includi: scenario, tool, vantaggi, rischi, verifica qualità.</p>
+                    <textarea id="aperta3" placeholder="Scrivi la tua risposta..." onchange="autoSave()"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Corso Completo IA - Versione Studenti</strong></p>
+            <p>70 ore totali: 35 ore lezioni, 25 ore esercitazioni, 10 ore valutazioni</p>
+            <p>Buono studio!</p>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = '';
+        const correctAnswers = {
+            'q1': 'b',
+            'q2': 'b',
+            'q3': 'b',
+            'exam1': 'b',
+            'exam2': 'b',
+            'exam3': 'b',
+            'exam4': 'b',
+            'exam5': 'b',
+            'exam6': 'b',
+            'exam7': 'b',
+            'exam8': 'b',
+            'exam9': 'b',
+            'exam10': 'b'
+        };
+
+        function initUser() {
+            currentUserId = document.getElementById('userIdInput').value.trim();
+            if (!currentUserId) {
+                alert('Inserisci un ID utente valido');
+                return;
+            }
+            
+            // MODIFICA CORRETTA: Nascondi solo input e bottone accedi, mantieni gli altri pulsanti
+            const userInfo = document.getElementById('userInfo');
+            userInfo.innerHTML = `👤 <strong>${currentUserId}</strong> | ${new Date().toLocaleString('it-IT')}`;
+            userInfo.style.display = 'inline-block';
+            
+            // Nascondi input e bottone Accedi
+            document.getElementById('userIdInput').style.display = 'none';
+            document.querySelector('button[onclick="initUser()"]').style.display = 'none';
+            
+            document.getElementById('mainContent').style.display = 'block';
+            loadProgress();
+            updateProgressBar();
+        }
+
+        function showModule(moduleName) {
+            document.querySelectorAll('.modulo-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(moduleName).classList.remove('hidden');
+            document.querySelectorAll('.modulo-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelector('.content').scrollTop = 0;
+            autoSave();
+        }
+
+        function autoSave() {
+            if (!currentUserId) return;
+            saveProgress();
+        }
+
+        function saveAndCheck(questionName) {
+            saveProgress();
+            checkQuiz(questionName);
+        }
+
+        function checkQuiz(questionName) {
+            if (!correctAnswers[questionName]) return;
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedbackEl = document.getElementById(`fb_${questionName}`);
+            
+            if (selected) {
+                if (selected.value === correctAnswers[questionName]) {
+                    feedbackEl.textContent = '✓ Corretto!';
+                    feedbackEl.className = 'feedback show correct';
+                } else {
+                    feedbackEl.textContent = '✗ Sbagliato. Riprova!';
+                    feedbackEl.className = 'feedback show incorrect';
+                }
+                updateProgressBar();
+            }
+        }
+
+        function saveProgress() {
+            if (!currentUserId) return;
+            const progress = {
+                userId: currentUserId,
+                timestamp: new Date().toISOString(),
+                data: {}
+            };
+
+            document.querySelectorAll('input[type="radio"]:checked, textarea').forEach(el => {
+                if (el.id) progress.data[el.id] = el.value;
+                if (el.name && el.type === 'radio') progress.data[el.name] = el.value;
+            });
+
+            localStorage.setItem(`corsoIA_${currentUserId}`, JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            if (!currentUserId) return;
+            const saved = localStorage.getItem(`corsoIA_${currentUserId}`);
+            if (saved) {
+                const progress = JSON.parse(saved);
+                Object.keys(progress.data).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        if (el.type === 'radio') {
+                            const radioEl = document.querySelector(`input[name="${key}"][value="${progress.data[key]}"]`);
+                            if (radioEl) radioEl.checked = true;
+                        } else {
+                            el.value = progress.data[key];
+                        }
+                    }
+                });
+                Object.keys(correctAnswers).forEach(q => checkQuiz(q));
+            }
+        }
+
+        function updateProgressBar() {
+            const totalQuizzes = Object.keys(correctAnswers).length;
+            let correct = 0;
+            Object.keys(correctAnswers).forEach(q => {
+                const selected = document.querySelector(`input[name="${q}"]:checked`);
+                if (selected && selected.value === correctAnswers[q]) correct++;
+            });
+            const percentage = Math.round((correct / totalQuizzes) * 100);
+            document.getElementById('progressText').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = percentage + '%';
+            document.getElementById('progressDetails').textContent = `${correct}/${totalQuizzes} domande corrette (${percentage}%)`;
+        }
+
+        function exportProgressFile() {
+            if (!currentUserId) {
+                alert('Accedi prima di esportare');
+                return;
+            }
+            const saved = localStorage.getItem(`corsoIA_${currentUserId}`);
+            if (saved) {
+                const progress = JSON.parse(saved);
+                const testo = generaTestoRisposte(progress);
+                const blob = new Blob([testo], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Risposte_${currentUserId}_${new Date().toISOString().split('T')[0]}.txt`;
+                link.click();
+                URL.revokeObjectURL(url);
+                alert('✅ File scaricato! Ora puoi inviarlo via email.');
+            } else {
+                alert('Nessun progresso da esportare. Inizia a rispondere alle domande!');
+            }
+        }
+
+        function generaTestoRisposte(progress) {
+            let testo = `📋 RISPOSTE CORSO IA COMPLETO\n`;
+            testo += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            testo += `👤 Studente: ${progress.userId}\n`;
+            testo += `📅 Data: ${new Date(progress.timestamp).toLocaleString('it-IT')}\n`;
+            testo += `⏰ Timestamp: ${progress.timestamp}\n`;
+            testo += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+            testo += `✅ RISPOSTE QUIZ (Chiuse)\n`;
+            testo += `────────────────────────────\n`;
+            Object.keys(correctAnswers).forEach((q, idx) => {
+                const risposta = progress.data[q] || '(non risposto)';
+                const corretta = correctAnswers[q];
+                const mark = risposta === corretta ? '✓' : '✗';
+                testo += `${q}: ${risposta} ${mark}\n`;
+            });
+
+            testo += `\n📝 RISPOSTE APERTE (Esercizi)\n`;
+            testo += `────────────────────────────\n`;
+            Object.keys(progress.data).forEach(key => {
+                if (!correctAnswers[key] && progress.data[key]) {
+                    testo += `\n[${key}]\n${progress.data[key]}\n`;
+                }
+            });
+
+            testo += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            testo += `Generato: ${new Date().toLocaleString('it-IT')}\n`;
+            return testo;
+        }
+
+        function clearAllData() {
+            if (confirm(`Cancellare TUTTI i dati di ${currentUserId}?`)) {
+                localStorage.removeItem(`corsoIA_${currentUserId}`);
+                location.reload();
+            }
+        }
+
+        function printContent() {
+            window.print();
+        }
+
+        function toggleFullscreen() {
+            const container = document.querySelector('.container');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                container.requestFullscreen().catch(err => alert('Errore: ' + err.message));
+            }
+        }
+
+        // Auto-save ogni 3 secondi
+        setInterval(() => {
+            if (currentUserId) {
+                saveProgress();
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
